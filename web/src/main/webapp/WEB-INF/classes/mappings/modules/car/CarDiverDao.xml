@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeesite.modules.car.dao.CarDiverDao">
+	
+	<!-- 查询数据
+	<select id="findList" resultType="CarDiver">
+		SELECT ${sqlMap.column.toSql()}
+		FROM ${sqlMap.table.toSql()}
+		<where>
+			${sqlMap.where.toSql()}
+		</where>
+		ORDER BY ${sqlMap.order.toSql()}
+	</select> -->
+
+	<select id="findList" resultType="CarDiver">
+		SELECT t.*, t1.name teamName, t2.name subTeamName
+		FROM car_diver t
+		left join car_team t1 on t.team_id = t1.id
+		left join car_sub_team t2 on t.sub_team_id = t2.id
+		where t.status = 0
+	</select>
+	
+</mapper>

@@ -1,0 +1,101 @@
+<% layout('/layouts/default.html', {title: 'car_diver管理', libs: ['dataGrid']}){ %>
+<div class="main-content">
+	<div class="box box-main">
+		<div class="box-header">
+			<div class="box-title">
+				<i class="fa icon-notebook"></i> ${text('car_diver管理')}
+			</div>
+			<div class="box-tools pull-right">
+				<a href="#" class="btn btn-default" id="btnSearch" title="${text('查询')}"><i class="fa fa-filter"></i> ${text('查询')}</a>
+				<% if(hasPermi('car:carDiver:edit')){ %>
+					<a href="${ctx}/car/carDiver/form" class="btn btn-default btnTool" title="${text('新增car_diver')}"><i class="fa fa-plus"></i> ${text('新增')}</a>
+				<% } %>
+				<a href="#" class="btn btn-default" id="btnSetting" title="${text('设置')}"><i class="fa fa-navicon"></i></a>
+			</div>
+		</div>
+		<div class="box-body">
+			<#form:form id="searchForm" model="${carDiver}" action="${ctx}/car/carDiver/listData" method="post" class="form-inline hide"
+					data-page-no="${parameter.pageNo}" data-page-size="${parameter.pageSize}" data-order-by="${parameter.orderBy}">
+				<div class="form-group">
+					<label class="control-label">${text('name')}：</label>
+					<div class="control-inline">
+						<#form:input path="name" maxlength="255" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">${text('order')}：</label>
+					<div class="control-inline">
+						<#form:input path="order" maxlength="8" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">${text('car_number')}：</label>
+					<div class="control-inline">
+						<#form:input path="carNumber" maxlength="64" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">${text('team_id')}：</label>
+					<div class="control-inline">
+						<#form:input path="teamId" maxlength="64" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">${text('sub_team_id')}：</label>
+					<div class="control-inline">
+						<#form:input path="subTeamId" maxlength="64" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">${text('status')}：</label>
+					<div class="control-inline width-120">
+						<#form:select path="status" dictType="sys_search_status" blankOption="true" class="form-control isQuick"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">${text('remarks')}：</label>
+					<div class="control-inline">
+						<#form:input path="remarks" maxlength="255" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary btn-sm">${text('查询')}</button>
+					<button type="reset" class="btn btn-default btn-sm">${text('重置')}</button>
+				</div>
+			</#form:form>
+			<table id="dataGrid"></table>
+			<div id="dataGridPage"></div>
+		</div>
+	</div>
+</div>
+<% } %>
+<script>
+// 初始化DataGrid对象
+$('#dataGrid').dataGrid({
+	searchForm: $("#searchForm"),
+	columnModel: [
+		{header:'${text("司机编号")}', name:'order', index:'a.order', width:150, align:"center"},
+		{header:'${text("司机名称")}', name:'name', index:'a.name', width:150, align:"center"},
+		{header:'${text("车牌号")}', name:'carNumber', index:'a.car_number', width:150, align:"center"},
+		{header:'${text("车队名称")}', name:'teamName', index:'a.team_id', width:150, align:"center"},
+		{header:'${text("小队名称")}', name:'subTeamName', index:'a.sub_team_id', width:150, align:"center"},
+		{header:'${text("状态")}', name:'status', index:'a.status', width:150, align:"center", formatter: function(val, obj, row, act){
+				return js.getDictLabel(${@DictUtils.getDictListJson('sys_search_status')}, val, '${text("未知")}', true);
+			}},
+		{header:'${text("备注")}', name:'remarks', index:'a.remarks', width:150, align:"center"},
+		{header:'${text("更新时间")}', name:'updateDate', index:'a.update_date', width:150, align:"center"},
+		{header:'${text("操作")}', name:'actions', width:120, align:"center", sortable:false, title:false, formatter: function(val, obj, row, act){
+			var actions = [];
+			<% if(hasPermi('car:carDiver:edit')){ %>
+				actions.push('<a href="${ctx}/car/carDiver/form?id='+row.id+'" class="btnList" title="${text("编辑car_diver")}"><i class="fa fa-pencil"></i></a>&nbsp;');
+				actions.push('<a href="${ctx}/car/carDiver/delete?id='+row.id+'" class="btnList" title="${text("删除car_diver")}" data-confirm="${text("确认要删除该car_diver吗？")}"><i class="fa fa-trash-o"></i></a>&nbsp;');
+			<% } %>
+			return actions.join('');
+		}}
+	],
+	// 加载成功后执行事件
+	ajaxSuccess: function(data){
+		
+	}
+});
+</script>
